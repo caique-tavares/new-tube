@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { UserCircleIcon } from "lucide-react";
+import { ClapperboardIcon, UserCircleIcon } from "lucide-react";
 import {
   UserButton,
   SignInButton,
@@ -14,10 +14,18 @@ import {
 export const AuthButton = () => {
   return (
     <>
-    <SignedIn>
-      <UserButton/>
-    </SignedIn>
-    
+      <SignedIn>
+        <UserButton>
+          <UserButton.MenuItems>
+            <UserButton.Link
+              label="Studio"
+              href="/studio"
+              labelIcon={<ClapperboardIcon className="size-4" />}
+            />
+          </UserButton.MenuItems>
+        </UserButton>
+      </SignedIn>
+
       <SignedOut>
         <SignInButton mode="modal">
           <Button
