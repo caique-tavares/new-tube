@@ -53,7 +53,6 @@ export const POST = async (request: Request) => {
         return new Response("Error: Missing upload id", { status: 400 });
       }
 
-      console.log("Video created", { uploadId: data.upload_id });
 
       await db
         .update(videos)

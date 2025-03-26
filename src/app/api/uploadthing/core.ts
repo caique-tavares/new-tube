@@ -7,7 +7,6 @@ import { UploadThingError } from "uploadthing/server";
 import { z } from "zod";
 
 const f = createUploadthing();
-console.log("Uploadthing initialized", f);
 
 export const ourFileRouter = {
   thumbnailUploader: f({
@@ -20,21 +19,18 @@ export const ourFileRouter = {
     .middleware(async ({ input }) => {
       const { userId: clerkUserId } = await auth();
 
-      console.log("Clerk User ID:", clerkUserId);
 
       if (!clerkUserId) {
         console.error("Middleware- Unathorized");
         throw new UploadThingError("Unauthorized");
       }
 
-      console.log("passou por aqui");
 
       const [user] = await db
         .select()
         .from(users)
         .where(eq(users.clerkId, clerkUserId));
 
-      console.log("Database Query Result:", user);
 
       if (!user) {
         console.error("Middleware- User not found");
@@ -44,8 +40,6 @@ export const ourFileRouter = {
       return { user, ...input };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Metadata received:", metadata);
-      console.log("File received:", file);
       await db
         .update(videos)
         .set({
