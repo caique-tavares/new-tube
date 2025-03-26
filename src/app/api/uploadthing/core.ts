@@ -2,11 +2,12 @@ import { db } from "@/db";
 import { users, videos } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
-import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { createUploadthing, type FileRouter } from "uploadthing/server";
 import { UploadThingError } from "uploadthing/server";
 import { z } from "zod";
 
 const f = createUploadthing();
+console.log("Uploadthing initialized", f);
 
 export const ourFileRouter = {
   thumbnailUploader: f({
@@ -19,19 +20,32 @@ export const ourFileRouter = {
     .middleware(async ({ input }) => {
       const { userId: clerkUserId } = await auth();
 
-      if (!clerkUserId) throw new UploadThingError("Unauthorized");
+      console.log("Clerk User ID:", clerkUserId);
+
+      if (!clerkUserId) {
+        console.error("Middleware- Unathorized");
+        throw new UploadThingError("Unauthorized");
+      }
+
+      console.log("passou por aqui");
 
       const [user] = await db
         .select()
         .from(users)
-        .where(eq(users.id, clerkUserId));
+        .where(eq(users.clerkId, clerkUserId));
 
-      if (!user) throw new UploadThingError("User not found");
-      console.log("Middleware Input:", input);
+      console.log("Database Query Result:", user);
+
+      if (!user) {
+        console.error("Middleware- User not found");
+        throw new UploadThingError("User not found");
+      }
 
       return { user, ...input };
     })
     .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Metadata received:", metadata);
+      console.log("File received:", file);
       await db
         .update(videos)
         .set({
@@ -43,8 +57,6 @@ export const ourFileRouter = {
             eq(videos.userId, metadata.user.id)
           )
         );
-      console.log("Upload Metadata:", metadata);
-      console.log("Uploaded File:", file);
       return { uploadedBy: metadata.user.id };
     }),
 } satisfies FileRouter;
