@@ -33,7 +33,20 @@ export const videosRouter = createTRPCRouter({
 
       return existingVideo;
     }),
-  generateThumbnail: protectedProcedure
+  generateDescription: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const { id: userId } = ctx.user;
+
+      const { workflowRunId } = await workflow.trigger({
+        url: `${process.env.UPSTASH_WORKFLOW_URL}/api/videos/workflows/description`,
+        body: { userId, videoId: input.id },
+        retries: 3,
+      });
+
+      return workflowRunId;
+    }),
+  generateTitle: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const { id: userId } = ctx.user;
@@ -46,6 +59,20 @@ export const videosRouter = createTRPCRouter({
 
       return workflowRunId;
     }),
+  generateThumbnail: protectedProcedure
+    .input(z.object({ id: z.string().uuid(), prompt: z.string().min(10) }))
+    .mutation(async ({ ctx, input }) => {
+      const { id: userId } = ctx.user;
+
+      const { workflowRunId } = await workflow.trigger({
+        url: `${process.env.UPSTASH_WORKFLOW_URL}/api/videos/workflows/thumbnail`,
+        body: { userId, videoId: input.id, prompt: input.prompt },
+        retries: 3,
+      });
+
+      return workflowRunId;
+    }),
+
   restoreThumbnail: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
