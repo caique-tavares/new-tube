@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import {
+  subscriptions,
   users,
   videoReactions,
   videos,
@@ -14,7 +15,16 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { eq, and, or, lt, desc, getTableColumns, inArray } from "drizzle-orm";
+import {
+  eq,
+  and,
+  or,
+  lt,
+  desc,
+  getTableColumns,
+  inArray,
+  isNotNull,
+} from "drizzle-orm";
 
 import { z } from "zod";
 
@@ -45,12 +55,26 @@ export const videosRouter = createTRPCRouter({
           .where(inArray(videoReactions.userId, userId ? [userId] : []))
       );
 
+      const viewerSubscriptions = db.$with("viewerSubscriptions").as(
+        db
+          .select()
+          .from(subscriptions)
+          .where(inArray(subscriptions.viewerId, userId ? [userId] : []))
+      );
+
       const [existingVideo] = await db
-        .with(viwerReactions)
+        .with(viwerReactions, viewerSubscriptions)
         .select({
           ...getTableColumns(videos),
           user: {
             ...getTableColumns(users),
+            subscriberCount: db.$count(
+              subscriptions,
+              eq(subscriptions.creatorId, users.id)
+            ),
+            viewerSubscribed: isNotNull(viewerSubscriptions.viewerId).mapWith(
+              Boolean
+            ),
           },
           viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id)),
           likeCount: db.$count(
@@ -72,12 +96,12 @@ export const videosRouter = createTRPCRouter({
         .from(videos)
         .innerJoin(users, eq(videos.userId, users.id))
         .leftJoin(viwerReactions, eq(viwerReactions.videoId, videos.id))
-        .where(eq(videos.id, input.id))
-        .groupBy(
-          videos.id,
-          users.id,
-          viwerReactions.type,
+        .leftJoin(
+          viewerSubscriptions,
+          eq(viewerSubscriptions.creatorId, users.id)
         )
+        .where(eq(videos.id, input.id))
+        .groupBy(videos.id, users.id, viwerReactions.type);
 
       if (!existingVideo) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Video not found" });
