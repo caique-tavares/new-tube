@@ -18,14 +18,16 @@ export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
       <Link href={`/users/${user.id}`}>
         <div className="flex items-center gap-3 min-w-0">
           <UserAvatar size="lg" imageUrl={user.imageUrl} name={user.name} />
-          <UserInfo size="lg" name={user.name} />
-          <span className="text-sm text-muted-foreground line-clamp-1">
-            {0} subscribers
-          </span>
+          <div>
+            <UserInfo size="lg" name={user.name} />
+            <span className="text-sm text-muted-foreground line-clamp-1">
+              {0} subscribers
+            </span>
+          </div>
         </div>
       </Link>
       {clerkUserId === user.clerkId ? (
-        <Button className="rounded-full" asChild variant="secondary">
+        <Button className="rounded-full mt-1" asChild variant="secondary">
           <Link href={`/studio/videos/${videoId}`}>Edit Video</Link>
         </Button>
       ) : (
