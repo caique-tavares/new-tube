@@ -15,6 +15,8 @@ import {
   createSelectSchema,
 } from "drizzle-zod";
 
+export const reactionType = pgEnum("reaction_type", ["liked", "disliked"]);
+
 export const users = pgTable(
   "users",
   {
@@ -149,7 +151,7 @@ export const comments = pgTable("comments", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const commentsRelations = relations(comments, ({ one }) => ({
+export const commentsRelations = relations(comments, ({ one, many }) => ({
   user: one(users, {
     fields: [comments.userId],
     references: [users.id],
@@ -158,11 +160,45 @@ export const commentsRelations = relations(comments, ({ one }) => ({
     fields: [comments.videoId],
     references: [videos.id],
   }),
+  reactions: many(commentsReactions),
 }));
 
 export const commentSelectSchema = createSelectSchema(comments);
 export const commentInsertSchema = createInsertSchema(comments);
 export const commentUpdateSchema = createUpdateSchema(comments);
+
+export const commentsReactions = pgTable(
+  "comments_reactions",
+  {
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+    commentId: uuid("commentId").references(() => comments.id, {
+      onDelete: "cascade",
+    }),
+    type: reactionType("type").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({
+      name: "comment_reactions_pk",
+      columns: [t.userId, t.commentId],
+    }),
+  ]
+);
+
+export const commentsReactionsRelations = relations(
+  commentsReactions,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [commentsReactions.userId],
+      references: [users.id],
+    }),
+    comment: one(comments, {
+      fields: [commentsReactions.commentId],
+      references: [comments.id],
+    }),
+  })
+);
 
 export const videoViews = pgTable(
   "video_views",
@@ -196,8 +232,6 @@ export const videoViewsRelations = relations(videoViews, ({ one }) => ({
 export const videoViewSelectSchema = createSelectSchema(videoViews);
 export const videoViewInsertSchema = createInsertSchema(videoViews);
 export const videoViewUpdateSchema = createUpdateSchema(videoViews);
-
-export const reactionType = pgEnum("reaction_type", ["liked", "disliked"]);
 
 export const videoReactions = pgTable(
   "video_reactions",
