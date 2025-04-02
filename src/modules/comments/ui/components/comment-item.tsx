@@ -159,25 +159,25 @@ export const CommentItem = ({
           </div>
         </div>
         {/* {comment.user.clerkId !== userId && variant === "comment" && ( */}
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <MoreVerticalIcon />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsReplyOpen(true)}>
-                <MessageSquareIcon />
-                Reply
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <MoreVerticalIcon />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setIsReplyOpen(true)}>
+              <MessageSquareIcon />
+              Reply
+            </DropdownMenuItem>
+            {comment.user.clerkId === userId && (
+              <DropdownMenuItem
+                onClick={() => remove.mutate({ id: comment.id })}
+              >
+                <Trash2Icon />
+                Delete
               </DropdownMenuItem>
-              {comment.user.clerkId === userId && (
-                <DropdownMenuItem
-                  onClick={() => remove.mutate({ id: comment.id })}
-                >
-                  <Trash2Icon />
-                  Delete
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
         {/* // )} */}
       </div>
       {isReplyOpen && variant === "comment" && (
