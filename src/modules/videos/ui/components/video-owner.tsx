@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SubscriptionButton } from "@/modules/subscriptions/ui/components/subscription-button";
 import { useAuth } from "@clerk/nextjs";
 import { UserInfo } from "@/modules/users/ui/components/user-info";
-import { userSubscription } from "@/modules/subscriptions/hooks/useSubscription";
+import { UseSubscription } from "@/modules/subscriptions/hooks/useSubscription";
 
 interface VideoOwnerProps {
   user: VideoGetOneOutput["user"];
@@ -14,7 +14,7 @@ interface VideoOwnerProps {
 
 export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
   const { userId: clerkUserId } = useAuth(); // Replace with actual user ID retrieval logic
-  const { isPending, onClick } = userSubscription({
+  const { isPending, onClick } = UseSubscription({
     userId: user.id,
     isSubscribed: user.viewerSubscribed,
     fromVideoId: videoId,
@@ -39,7 +39,7 @@ export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
         </Button>
       ) : (
         <SubscriptionButton
-          onClick={() => {}}
+          onClick={() => onClick()}
           disabled={false}
           isSubscribed={false}
           className="rounded-full"

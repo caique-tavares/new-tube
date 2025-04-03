@@ -8,7 +8,7 @@ interface useSubscriptionProps {
   fromVideoId?: string;
 }
 
-export const userSubscription = ({
+export const UseSubscription = ({
   userId,
   isSubscribed,
   fromVideoId,
@@ -19,6 +19,9 @@ export const userSubscription = ({
   const subscribe = trpc.subscriptions.create.useMutation({
     onSuccess: () => {
       toast.success("Subscribed successfully");
+
+      utils.videos.getManySubscribed.invalidate();
+
       if (fromVideoId) {
         utils.videos.getOne.invalidate({ id: fromVideoId });
       }
@@ -34,6 +37,9 @@ export const userSubscription = ({
   const unsubscribe = trpc.subscriptions.remove.useMutation({
     onSuccess: () => {
       toast.success("Subscribed successfully");
+      
+      utils.videos.getManySubscribed.invalidate();
+
       if (fromVideoId) {
         utils.videos.getOne.invalidate({ id: fromVideoId });
       }
