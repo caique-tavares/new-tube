@@ -11,6 +11,7 @@ import {
 import { HistoryIcon, ListVideoIcon, ThumbsUpIcon } from "lucide-react";
 import { useClerk, useAuth } from "@clerk/nextjs";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const items = [
   {
@@ -20,7 +21,7 @@ const items = [
   },
   {
     title: "Liked Videos",
-    url: "/playlists/likevideos",
+    url: "/playlists/liked",
     icon: ThumbsUpIcon,
     auth: true,
   },
@@ -33,6 +34,7 @@ const items = [
 ];
 
 export const PersonalSection = () => {
+  const pathname = usePathname();
   const clerk = useClerk();
   const { isSignedIn } = useAuth();
 
@@ -46,7 +48,7 @@ export const PersonalSection = () => {
               <SidebarMenuButton
                 tooltip={item.title}
                 asChild
-                isActive={false}
+                isActive={pathname === item.url}
                 onClick={(e) => {
                   if (!isSignedIn && item.auth) {
                     e.preventDefault();
