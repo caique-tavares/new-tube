@@ -1,17 +1,7 @@
-import { cva, type VariantProps } from "class-variance-authority";
 import { VideoGetManyOutPut } from "../../type";
 import Link from "next/link";
 import { VideoThumbnail } from "./video-thumbnail";
-import { cn } from "@/lib/utils";
-import { UserAvatar } from "@/components/user-avatar";
-import { UserInfo } from "@/modules/users/ui/components/user-info";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { VideoMenu } from "./video-menu";
-import { useMemo } from "react";
+
 import { VideoInfo } from "./video-info";
 
 interface VideoGridCardProps {
