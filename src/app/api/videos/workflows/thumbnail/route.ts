@@ -43,6 +43,14 @@ export const { POST } = serve(async (context) => {
     }
   );
 
+  if (!body?.data?.[0]?.url) {
+    console.error(
+      "Erro ao gerar thumbnail. Resposta:",
+      JSON.stringify(body, null, 2)
+    );
+    throw new Error("Thumbnail URL not found");
+  }
+
   const tempThumbnailUrl = body.data[0].url;
 
   if (!tempThumbnailUrl) {

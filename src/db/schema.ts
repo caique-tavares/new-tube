@@ -29,7 +29,7 @@ export const playlistVideos = pgTable(
       .notNull(),
     position: integer("position").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (t) => [
     primaryKey({
