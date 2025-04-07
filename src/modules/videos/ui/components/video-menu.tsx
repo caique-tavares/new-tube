@@ -11,6 +11,7 @@ import {
   ShareIcon,
   Trash2Icon,
 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface VideoMenuProps {
@@ -24,6 +25,8 @@ export const VideoMenu = ({
   variant = "ghost",
   onRemove,
 }: VideoMenuProps) => {
+  const [openPlaylistAddModal, setOpenPlaylistAddModal] = useState(false);
+
   const onShare = () => {
     const fullUrl = `${
       process.env.VERCEL_URL || "http://localhost:3000"
@@ -44,7 +47,7 @@ export const VideoMenu = ({
           <ShareIcon className="size-4 mr-2" />
           Share
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => {}}>
+        <DropdownMenuItem onClick={() => setOpenPlaylistAddModal}>
           <ListPlusIcon className="size-4 mr-2" />
           Add to Playlist
         </DropdownMenuItem>

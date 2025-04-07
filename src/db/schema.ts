@@ -18,6 +18,57 @@ import {
 
 export const reactionType = pgEnum("reaction_type", ["liked", "disliked"]);
 
+export const playlistVideos = pgTable(
+  "playlist_videos",
+  {
+    playlistId: uuid("playlist_id")
+      .references(() => playlist.id, { onDelete: "cascade" })
+      .notNull(),
+    videoId: uuid("video_id")
+      .references(() => videos.id, { onDelete: "cascade" })
+      .notNull(),
+    position: integer("position").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({
+      name: "playlist_videos_pk",
+      columns: [t.playlistId, t.videoId],
+    }),
+  ]
+);
+
+export const playlistVideoRelations = relations(playlistVideos, ({ one }) => ({
+  playlist: one(playlist, {
+    fields: [playlistVideos.playlistId],
+    references: [playlist.id],
+  }),
+  video: one(videos, {
+    fields: [playlistVideos.videoId],
+    references: [videos.id],
+  }),
+}));
+
+export const playlist = pgTable("playlist", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  userId: uuid("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export const playlistRelations = relations(playlist, ({ one, many }) => ({
+  playlist: one(users, {
+    fields: [playlist.userId],
+    references: [users.id],
+  }),
+  video: one(playlistVideos),
+}));
+
 export const users = pgTable(
   "users",
   {
@@ -42,6 +93,8 @@ export const userRelations = relations(users, ({ many }) => ({
     relationName: "subscriptions_creator_id_fkey",
   }),
   comments: many(comments),
+  commentReactions: many(commentsReactions),
+  playlist: many(playlist),
 }));
 
 export const subscriptions = pgTable(
