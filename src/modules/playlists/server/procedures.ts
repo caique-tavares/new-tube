@@ -18,6 +18,22 @@ import { eq, and, or, lt, desc, getTableColumns, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const playlistsRouter = createTRPCRouter({
+  getOne: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ input, ctx }) => {
+      const { id } = input;
+      const { id: userId } = ctx.user;
+
+      const [existingPlaylist] = await db
+        .select()
+        .from(playlist)
+        .where(and(eq(playlist.id, id), eq(playlist.userId, userId)));
+
+      if (!existingPlaylist) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return existingPlaylist;
+    }),
+
   getVideos: baseProcedure
     .input(
       z.object({

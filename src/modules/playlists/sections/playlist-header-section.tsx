@@ -1,3 +1,4 @@
+import { Trash2Icon } from "lucide-react";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -33,7 +34,7 @@ const PlaylistHeaderSectionSuspense = ({
       size="icon" 
       className="rounded-full"
       >
-        
+        <Trash2Icon/>
       </Button>
     </div>
   );
