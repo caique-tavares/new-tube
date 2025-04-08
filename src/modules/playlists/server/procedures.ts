@@ -18,6 +18,21 @@ import { eq, and, or, lt, desc, getTableColumns, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const playlistsRouter = createTRPCRouter({
+  remove: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input;
+      const { id: userId } = ctx.user;
+
+      const [deletedPlaylist] = await db
+        .delete(playlist)
+        .where(and(eq(playlist.id, id), eq(playlist.userId, userId)))
+        .returning();
+
+      if (!deletedPlaylist) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return deletedPlaylist;
+    }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
