@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 interface VideoDescriptionProps {
   compactViews: string;
@@ -19,7 +18,6 @@ export const VideoDescription = ({
   description,
 }: VideoDescriptionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
 
   return (
     <div

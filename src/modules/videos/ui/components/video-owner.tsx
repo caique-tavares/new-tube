@@ -14,7 +14,7 @@ interface VideoOwnerProps {
 
 export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
   const { userId: clerkUserId } = useAuth(); // Replace with actual user ID retrieval logic
-  const { isPending, onClick } = UseSubscription({
+  const { onClick } = UseSubscription({
     userId: user.id,
     isSubscribed: user.viewerSubscribed,
     fromVideoId: videoId,

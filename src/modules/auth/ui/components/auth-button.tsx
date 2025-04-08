@@ -3,13 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ClapperboardIcon, UserCircleIcon, UserIcon } from "lucide-react";
-import {
-  UserButton,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
+import { UserButton, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 export const AuthButton = () => {
   return (

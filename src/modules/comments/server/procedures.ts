@@ -1,11 +1,5 @@
 import { db } from "@/db";
-import {
-  comments,
-  commentSelectSchema,
-  commentsReactions,
-  users,
-  videos,
-} from "@/db/schema";
+import { comments, commentsReactions, users } from "@/db/schema";
 import {
   baseProcedure,
   createTRPCRouter,
