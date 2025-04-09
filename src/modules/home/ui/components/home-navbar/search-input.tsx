@@ -9,23 +9,37 @@ export const SearchInput = () => {
   const [value, setValue] = useState("");
   const router = useRouter();
 
+  // const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+
+  //   const url = new URL(
+  //     "/search",
+  //     process.env.VERCEL_URL ? process.env.VERCEL_URL : "http://localhost:3000"
+  //   );
+  //   const newQuery = value.trim();
+
+  //   url.searchParams.set("query", encodeURIComponent(newQuery));
+
+  //   if (newQuery === "") {
+  //     url.searchParams.delete("query");
+  //   }
+
+  //   setValue(newQuery);
+  //   router.push(`/search?${url.searchParams.toString()}`);
+  // };
+  
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const url = new URL(
-      "/search",
-      process.env.VERCEL_URL ? process.env.VERCEL_URL : "http://localhost:3000"
-    );
     const newQuery = value.trim();
+    const searchParams = new URLSearchParams();
 
-    url.searchParams.set("query", encodeURIComponent(newQuery));
-
-    if (newQuery === "") {
-      url.searchParams.delete("query");
+    if (newQuery !== "") {
+      searchParams.set("query", newQuery);
     }
 
     setValue(newQuery);
-    router.push(url.toString());
+    router.push(`/search?${searchParams.toString()}`);
   };
 
   return (
