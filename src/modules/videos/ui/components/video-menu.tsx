@@ -29,9 +29,7 @@ export const VideoMenu = ({
   const [isOpenPlaylistAddModal, setOpenPlaylistAddModal] = useState(false);
 
   const onShare = () => {
-    const fullUrl = `${
-      process.env.VERCEL_URL || "http://localhost:3000"
-    }/videos/${videoId}`;
+    const fullUrl = `${window.location.origin}/videos/${videoId}`;
     navigator.clipboard.writeText(fullUrl);
     toast.success("Video link copied to clipboard");
   };
